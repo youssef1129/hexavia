@@ -58,3 +58,21 @@ Ce journal recense les etapes, decisions architecturales et validations effectue
   - Les idees triviales (ex. "Cafe gratuit") recoivent une notation minimale (impact 1, innovation 1, alignement 1) et une justification explicite.
   - Les formats heterogenes de date sont uniformises des l import.
 - **Statut de validation** : 20/20 tests Vitest reussis, aucun tiret cadratin, lint ESLint et compilation TypeScript 100 % au vert.
+
+## 2026-11-14 20:10 - Moteur de Doublons et Constitution de la Shortlist (Step 4 - Duplicates & Shortlist)
+- **Etape** : Algorithmes purs de detection de doublons et generation de la shortlist.
+- **Actions** :
+  - Implementation de `lib/duplicate-detector.ts` combinant normalisation sans accents, filtrage des mots vides francais, similarite lexicale Jaccard et 3-grammes de caracteres, avec reconnaissance thematique ciblee (compresseurs, chatbot RH, dictee vocale de rapports, covoiturage).
+  - Implementation de `lib/shortlist.ts` :
+    * Priorite stricte de la notation consultant sur l IA sans ecraser la proposition originale.
+    * De-doublonnage par composantes connexes : exclusion automatique du doublon le moins bien note lorsqu une paire est confirmee par Camille.
+    * Ordonnancement multicritere (score total, impact business, sobriete budgetaire).
+    * Capacite d ajout et de retrait manuel d idees.
+    * Calcul automatique des metriques pour le jury (budget global, note moyenne, idees non budgetees).
+  - Creation des suites de tests unitaires :
+    * `tests/duplicate-detector.test.ts` (5 tests validant les cas d ecole exacts et proches).
+    * `tests/shortlist.test.ts` (5 tests validant priorite consultant, de-doublonnage et regles manuelles).
+- **Decisions & Arbitrages** :
+  - Seuil de similarite calibre a 0.35 avec renfort thematique sur les compresseurs, chatbots RH, dictee de rapports et covoiturage.
+  - Shortlist fixee par defaut a 8 idees (recommandation INSKIP / Hexavia) tout en offrant a Camille le controle total d ajustement.
+- **Statut de validation** : 30/30 tests Vitest au vert, lint ESLint et types TypeScript sans erreur.
