@@ -33,3 +33,12 @@ Ce journal recense les etapes, decisions architecturales et validations effectue
   - Utilisation de Node 22 pour aligner l environnement local et la CI.
   - Utilisation du format ESM (`.mts`) pour `vitest.config.mts` afin d eliminer tout avertissement de configuration.
 - **Statut de validation** : Tests Vitest (100 % succes), lint et build Next.js valides avec succes localement.
+
+## 2026-11-14 16:15 - Premier Deploiement Vercel (Step 2 - Vercel Deploy)
+- **Etape** : Deploiement initial sur Vercel et liaison du depot GitHub `youssef1129/hexavia`.
+- **Actions** :
+  - Mise a jour de la CLI Vercel vers la version native 65.16.0.
+  - Creation du projet `hexavia` et connexion au depot GitHub `youssef1129/hexavia`.
+  - Premier deploiement reussi en production.
+  - URL de production : `https://hexavia.vercel.app`.
+- **Statut de validation** : Build et deploiement Vercel termines avec succes (etat READY).
