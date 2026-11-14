@@ -19,3 +19,17 @@ Ce journal recense les etapes, decisions architecturales et validations effectue
   - Protection des donnees salariees : mot de passe applicatif unique via `APP_PASSWORD` valide par middleware, directive `noindex`, et interdiction formelle d inclure des noms ou prenoms dans les logs serveur.
   - Scoring deterministe heuristique : utilisation de `MockScoringProvider` avec explications structurees en francais et prise en compte de la faisabilite budgetaire.
 - **Statut de validation** : Fichiers crees, conformes a la consigne et sans tiret cadratin.
+
+## 2026-11-14 16:08 - Echafaudage technique et Integration Continue (Step 2 - Scaffold)
+- **Etape** : Configuration des outils de test et du workflow CI.
+- **Actions** :
+  - Installation de Vitest et de la bibliotheque Supabase (`@supabase/supabase-js`).
+  - Configuration de `vitest.config.mts` avec alias de chemin `@/`.
+  - Creation de `.env.example` documentant les variables (APP_PASSWORD, SUPABASE_URL, LLM_API_KEY).
+  - Mise a jour de `.gitignore` pour exclure les fichiers d environnement reels tout en trackant `.env.example`.
+  - Creation du workflow GitHub Actions `.github/workflows/ci.yml` executant lint, typecheck, tests Vitest et build Next.js.
+  - Creation d un premier test de validation `tests/smoke.test.ts`.
+- **Decisions & Arbitrages** :
+  - Utilisation de Node 22 pour aligner l environnement local et la CI.
+  - Utilisation du format ESM (`.mts`) pour `vitest.config.mts` afin d eliminer tout avertissement de configuration.
+- **Statut de validation** : Tests Vitest (100 % succes), lint et build Next.js valides avec succes localement.
