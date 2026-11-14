@@ -39,8 +39,8 @@ function buildConfirmedClusters(confirmedPairs: DuplicatePair[]): Map<string, Se
   for (const pair of confirmedPairs) {
     if (pair.status !== 'confirmed') continue;
 
-    let clusterA = clusters.get(pair.ideaAId);
-    let clusterB = clusters.get(pair.ideaBId);
+    const clusterA = clusters.get(pair.ideaAId);
+    const clusterB = clusters.get(pair.ideaBId);
 
     if (!clusterA && !clusterB) {
       const newCluster = new Set<string>([pair.ideaAId, pair.ideaBId]);

@@ -76,3 +76,37 @@ Ce journal recense les etapes, decisions architecturales et validations effectue
   - Seuil de similarite calibre a 0.35 avec renfort thematique sur les compresseurs, chatbots RH, dictee de rapports et covoiturage.
   - Shortlist fixee par defaut a 8 idees (recommandation INSKIP / Hexavia) tout en offrant a Camille le controle total d ajustement.
 - **Statut de validation** : 30/30 tests Vitest au vert, lint ESLint et types TypeScript sans erreur.
+
+## 2026-11-14 21:50 - Kit de Composants UI, Persistance et Securisation (Step 5 - UI Kit & API)
+- **Etape** : Composants atomiques sobres, routes API serveur, persistance locale/Supabase et protection d acces.
+- **Actions** :
+  - Creation de `lib/theme.ts` centralisant les jetons de design (couleurs industrielles, palettes par theme metier).
+  - Creation des composants atomiques sous `components/ui/` :
+    * `Button` (variantes primaire, secondaire, contour, discret, danger, etat de chargement)
+    * `Input` (champs texte avec icones, libelles et erreurs)
+    * `Select` (selection deroulante accessible)
+    * `Badge` (etiquettes thematiques et statutaires)
+    * `Card`, `CardHeader`, `CardBody`, `CardFooter` (conteneurs modulaires)
+    * `Dialog` (fenetre modale accessible avec gestion Echap et piege de focus)
+    * `Table` (tableaux responsives avec tri)
+    * `Tabs` (navigation par onglets avec compteurs)
+    * `Toast` (notifications temporaires de confirmation)
+    * `Spinner` et `Skeleton` (indicateurs de chargement discrets)
+    * `EmptyState` (etat d accueil chaleureux et actionnable)
+    * `ErrorMessage` (bandeau d alerte d erreur)
+    * `ScoreInput` (selecteur ergonomique 1 a 5 affichant distinctement la suggestion IA et la correction consultant)
+  - Implementation de la persistance locale et abstraction Supabase (`lib/storage.ts`, `lib/supabase.ts`).
+  - Creation des routes API :
+    * `GET/POST /api/ideas` (liste, import CSV avec verification et notation automatique)
+    * `POST /api/ideas/reset` (rechargement des 40 idees natives Hexavia)
+    * `POST /api/ideas/clear` (mise a zero pour tester l ecran vide)
+    * `POST /api/ideas/[id]/score` (sauvegarde de la note et des remarques de Camille)
+    * `POST /api/duplicates/[pairId]` (statut confirme / rejete)
+    * `POST /api/shortlist/toggle` et `POST /api/shortlist/target` (arbitrages manuels)
+    * `GET /api/export/csv` (telechargement CSV conforme avec BOM)
+  - Implementation de `middleware.ts` pour verifier `APP_PASSWORD` et injecter la directive `X-Robots-Tag: noindex, nofollow` preservant la confidentialite des collaborateurs.
+  - Creation de tests unitaires pour le theme UI (`tests/ui-components.test.ts`).
+- **Decisions & Arbitrages** :
+  - Respect scrupuleux de l interdiction des librairies tierces d etat global : l etat reste gere directement par l API Next.js et React.
+  - L interface de notation `ScoreInput` met visuellement en exergue les divergences entre l avis IA et l arbitrage de Camille.
+- **Statut de validation** : 32/32 tests Vitest reussis, 0 erreur ESLint, 0 erreur TypeScript.
