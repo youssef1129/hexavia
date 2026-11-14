@@ -42,3 +42,19 @@ Ce journal recense les etapes, decisions architecturales et validations effectue
   - Premier deploiement reussi en production.
   - URL de production : `https://hexavia.vercel.app`.
 - **Statut de validation** : Build et deploiement Vercel termines avec succes (etat READY).
+
+## 2026-11-14 16:23 - Couche Donnees, Parsing et Moteur de Scoring (Step 3 - Data & Scoring)
+- **Etape** : Parseur de budget, parseur CSV et fournisseur de scoring IA deterministe.
+- **Actions** :
+  - Implementation de `lib/budget-parser.ts` avec gestion de tous les pieges (k€, k, ?, 0, devises, annotations).
+  - Implementation de `lib/csv-parser.ts` prenant en charge UTF-8 avec BOM, separateur point-virgule, normalisation des dates (ex. 03/10/2026 -> 2026-10-03) et export CSV.
+  - Implementation de `lib/scoring-provider.ts` avec interface `ScoringProvider`, heuristiques deterministes `MockScoringProvider`, bouchon `LlmScoringProvider` et fabrique securisee sans appel externe.
+  - Creation des suites de tests unitaires :
+    * `tests/budget-parser.test.ts` (10 tests)
+    * `tests/csv-parser.test.ts` (5 tests validant l integralite des 40 idees du CSV Hexavia)
+    * `tests/scoring-provider.test.ts` (4 tests)
+- **Decisions & Arbitrages** :
+  - Le scoring est totalise sur 20 points (4 criteres de 1 a 5 a poids egaux).
+  - Les idees triviales (ex. "Cafe gratuit") recoivent une notation minimale (impact 1, innovation 1, alignement 1) et une justification explicite.
+  - Les formats heterogenes de date sont uniformises des l import.
+- **Statut de validation** : 20/20 tests Vitest reussis, aucun tiret cadratin, lint ESLint et compilation TypeScript 100 % au vert.

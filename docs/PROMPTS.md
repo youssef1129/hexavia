@@ -21,3 +21,8 @@ Ce document reference les prompts structurants utilises lors de la construction 
 - **Piege potentiel** : Presumer que toutes les dates respectent le format ISO 8601 (AAAA-MM-JJ).
 - **Ecart observe** : L observation minutieuse du fichier source montre que IDEA-033 est encode en "03/10/2026" (JJ/MM/AAAA) tandis que les autres utilisent "2026-10-07".
 - **Detection & Correction** : Ajout d une regle de normalisation des dates dans le parseur CSV des le premier jalon.
+
+### Cas 3 : Verification du libelle de justification pour les idees de faible valeur
+- **Piege potentiel** : Divergence entre la chaine generee par le fournisseur de scoring et l assertion de test sur le mot-cle ("faible").
+- **Ecart observe** : Le mock initial generait "Proposition conviviale mais sans impact economique...", faisant echouer le test unitaire `attribue un score bas a une idee a faible valeur`.
+- **Detection & Correction** : Echec detecte immediatement par `vitest run`. Correction dans `MockScoringProvider` pour expliciter "Proposition a faible valeur : sans impact economique..." et harmoniser l interface utilisateur et les tests.
