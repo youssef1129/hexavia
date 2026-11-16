@@ -26,3 +26,7 @@ Ce document reference les prompts structurants utilises lors de la construction 
 - **Piege potentiel** : Divergence entre la chaine generee par le fournisseur de scoring et l assertion de test sur le mot-cle ("faible").
 - **Ecart observe** : Le mock initial generait "Proposition conviviale mais sans impact economique...", faisant echouer le test unitaire `attribue un score bas a une idee a faible valeur`.
 - **Detection & Correction** : Echec detecte immediatement par `vitest run`. Correction dans `MockScoringProvider` pour expliciter "Proposition a faible valeur : sans impact economique..." et harmoniser l interface utilisateur et les tests.
+
+### Cas 4 : Types de layout et build hors ligne
+- **Ecart observe** : Le workflow distant signale `LayoutProps` non defini dans `app/layout.tsx`. Le type genere dependait de la version de Next.js et n'etait pas disponible dans ce contexte; un type explicite `{ children: React.ReactNode }` est plus stable. Le build local a aussi revele que `next/font/google` telecharge les polices lors de la compilation et echoue sans acces a Google Fonts.
+- **Detection & Correction** : Verification par `npx tsc --noEmit` et `npm run build`; remplacement par le type explicite et retrait de la dependance de compilation aux polices distantes. Le build local passe sans telechargement.

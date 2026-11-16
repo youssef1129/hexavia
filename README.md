@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Hexavia - Challenge Innovation
 
-## Getting Started
+Outil interne pour examiner les idees du challenge innovation Hexavia, comparer une evaluation heuristique a celle de Camille, examiner les doublons et preparer une shortlist. L'interface est en francais et l'acces peut etre protege par un mot de passe.
 
-First, run the development server:
+## Lancer l'outil
+
+Prerequis : Node.js 22 et npm.
 
 ```bash
+npm ci
+Copy-Item .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrir http://localhost:3000. Dans `.env.local`, remplacer `APP_PASSWORD` par un mot de passe local prive. Pour un acces sans mot de passe en developpement, laisser cette variable vide. Ne jamais commiter `.env.local` ni utiliser le mot de passe d'exemple en production.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Commandes de verification : `npm run lint`, `npx tsc --noEmit`, `npm run test` et `npm run build`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 1. Cadrage
 
-## Learn More
+Le besoin est de donner a Camille et au jury un outil simple pour parcourir les idees, filtrer le catalogue, enregistrer des notes, verifier les propositions de doublons et exporter une selection. Les donnees peuvent contenir les noms des collaborateurs : l'application ajoute `noindex`, protege les pages par mot de passe si `APP_PASSWORD` est configure et ne doit pas journaliser les noms.
 
-To learn more about Next.js, take a look at the following resources:
+## 2. Conception
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Le projet utilise Next.js 16 App Router, React, TypeScript strict et Tailwind CSS. Les pages et composants d'interface se trouvent dans `app/` et `components/`; parsing CSV et budget, scoring, detection des doublons et shortlist sont dans `lib/`. L'evaluation locale est deterministe et n'appelle aucun service LLM.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Le catalogue initial est charge depuis `data/idees_hexavia.csv`. En local, l'etat modifie est conserve dans `.next/hexavia-state.json`. Cette persistance fichier et la memoire du processus ne constituent pas un stockage durable sur Vercel : les modifications peuvent etre perdues lors d'un redemarrage ou varier entre instances. Prevoir un stockage partage et durable avant un usage de production multi-utilisateur. La configuration Supabase documentee dans `.env.example` n'est pas encore branchee a `lib/storage.ts`.
 
-## Deploy on Vercel
+## 3. Construction avec l'IA
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Les prompts efficaces ont demande des modules metier purs et testables, une separation entre note IA et note consultant, ainsi que des validations sur les cas limites de budget, dates et doublons. Les sorties ont ete confrontees au CSV source, au typage strict et aux tests. Les erreurs rencontrees et leur correction sont detaillees dans [docs/PROMPTS.md](docs/PROMPTS.md).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 4. Fiabilisation
+
+Vitest couvre les parseurs CSV et budget, le scoring, les doublons, la shortlist et les composants. La suite actuelle contient 32 tests. CI execute le typecheck, ESLint, Vitest et le build Next.js. La verification locale du 16 novembre 2026 a confirme ces controles; le deploiement distant doit etre relance apres publication des changements.
+
+## 5. Livraison sur Vercel
+
+Importer le depot dans Vercel avec le preset Next.js et conserver les commandes par defaut (`npm run build`). Ajouter `APP_PASSWORD` dans les variables d'environnement Vercel pour Production et Preview, avec une valeur aleatoire privee, puis redeployer. Sans cette variable, le middleware laisse l'application accessible sans connexion. `NEXT_PUBLIC_APP_URL` peut etre defini sur l'URL publique; il n'est pas necessaire au rendu principal.
+
+La configuration Next.js inclut explicitement le CSV dans le trace des routes API afin que le jeu initial soit disponible dans les fonctions Vercel. Les imports, notes et arbitrages doivent etre traites comme temporaires sur Vercel tant qu'un stockage persistant partage n'est pas branche. L'export CSV est disponible dans l'application; l'export PDF peut etre fait via l'impression du navigateur sur la page shortlist.
+
+## 6. Journal
+
+Les etapes et validations sont resumees dans [docs/JOURNAL.md](docs/JOURNAL.md). Les prompts et erreurs d'assistance sont suivis dans [docs/PROMPTS.md](docs/PROMPTS.md).
+
+## 7. Suite et questions pour Camille
+
+Hypotheses actuelles : quatre criteres ponderes egalement, note totale sur 20 et shortlist recommandee de 8 idees. A confirmer avec Camille : faut-il ajuster ces poids ou le nombre de finalistes, et quel stockage partage doit etre retenu pour conserver les arbitrages en production ?

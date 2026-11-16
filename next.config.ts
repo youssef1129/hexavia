@@ -7,6 +7,11 @@ const nextConfig: NextConfig = {
   },
   cacheComponents: true,
   partialPrefetching: true,
+  // Les routes serveur lisent le CSV par chemin de fichier au demarrage.
+  // L'inclusion explicite garantit sa presence dans les fonctions Vercel.
+  outputFileTracingIncludes: {
+    '/api/**': ['./data/idees_hexavia.csv'],
+  },
   turbopack: {
     rules: {
       "*.css": {

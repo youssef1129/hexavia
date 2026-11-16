@@ -110,3 +110,13 @@ Ce journal recense les etapes, decisions architecturales et validations effectue
   - Respect scrupuleux de l interdiction des librairies tierces d etat global : l etat reste gere directement par l API Next.js et React.
   - L interface de notation `ScoreInput` met visuellement en exergue les divergences entre l avis IA et l arbitrage de Camille.
 - **Statut de validation** : 32/32 tests Vitest reussis, 0 erreur ESLint, 0 erreur TypeScript.
+
+## 2026-11-16 - Correction du deploiement Vercel et documentation
+- **Etape** : Fiabilisation CI et livraison.
+- **Actions** :
+  - Verification du typecheck local et correction deja presente dans `app/layout.tsx` : remplacement de `LayoutProps<"/">` par un type explicite pour `children`, qui ne depend pas des types de route generes.
+  - Ajout de `outputFileTracingIncludes` pour inclure le CSV initial dans les fonctions API deployeees sur Vercel.
+  - Reecriture du README en francais avec demarrage, configuration Vercel, limites du stockage temporaire serverless et fonctionnalites disponibles.
+- **Decisions & Arbitrages** : Le fallback fichier/memoire est conserve pour le mode local. Un stockage durable partage devra etre branche avant de conserver les modifications sur Vercel.
+- **Statut de validation** : TypeScript, lint et 32 tests Vitest reussis avant ces changements; build Next.js a relancer avec la nouvelle configuration.
+- **Mise a jour de validation (2026-11-16)** : Suppression du telechargement de polices Google a la compilation, apres reproduction d'un echec `next/font` sans acces reseau. TypeScript, ESLint, 32 tests Vitest et `npm run build` passent apres correction.
